@@ -24,7 +24,7 @@ to: <%= name %>/package.json
   "devDependencies": {
     "cross-env": "5.2.0",
     "execa": "1.0.0",
-    "monitor-server": "git+https://gitlab.com/shardus/enterprise/monitor-server.git#port-argument",
+    "monitor-server": "git+https://gitlab.com/shardus/enterprise/monitor-server.git",
     "pm2": "3.5.0",
     "seed-node-server": "git+https://gitlab.com/shardus/enterprise/seed-node-server.git",
     "shelljs": "0.8.3",
