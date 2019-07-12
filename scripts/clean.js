@@ -1,4 +1,3 @@
-const execa = require('execa')
 const { rm } = require('shelljs')
 
 async function main () {
