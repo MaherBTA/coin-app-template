@@ -1,7 +1,6 @@
 ---
 to: <%= name %>/scripts/clean.js
 ---
-const execa = require('execa')
 const { rm } = require('shelljs')
 
 async function main () {
