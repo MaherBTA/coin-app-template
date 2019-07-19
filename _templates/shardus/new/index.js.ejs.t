@@ -37,45 +37,15 @@ function setAccountData (accountsToAdd = []) {
     accounts[account.id] = account
   }
 }
-function getAccountsById (ids = []) {
-  const accountsList = []
-  for (const id of ids) {
-    const account = accounts[id]
-    if (typeof account !== 'undefined' && account !== null) {
-      accountsList.push(account)
-    }
-  }
-  return accountsList
-}
-function getAccountsRange (accountStart, accountEnd, tsStart, tsEnd, maxRecords) {
-  const accountsArray = Object.values(accounts)
-  const matchingAccounts = accountsArray.filter(account => {
-    return (account.id >= accountStart || account.id <= accountEnd) &&
-           (account.timestamp >= tsStart || account.timestamp <= tsEnd)
-  })
-  return matchingAccounts.slice(0, maxRecords)
-}
-function wrapAccountResults (accountsList) {
-  const wrappedAccounts = []
-  for (const account of accountsList) {
-    wrappedAccounts.push({
-      accountId: account.id,
-      stateId: account.hash,
-      data: account.data,
-      timestamp: account.timestamp
-    })
-  }
-  return wrappedAccounts
-}
 function createAccount (obj = {}) {
   const account = Object.assign({
+    timestamp: Date.now(),
     id: crypto.randomBytes(),
     data: {
       balance: 0
     }
   }, obj)
   account.hash = crypto.hashObj(account.data)
-  account.timestamp = Date.now()
   return account
 }
 
@@ -176,63 +146,52 @@ dapp.setup({
       txnTimestamp
     }
   },
-  apply (tx) {
-    // Compute some fields required by Shardus
+  apply (tx, wrappedStates) {
+    // Validate the tx
+    const { result, reason } = this.validateTransaction(tx)
+    if (result !== 'pass') {
+      throw new Error(`invalid transaction, reason: ${reason}. tx: ${JSON.stringify(tx)}`)
+    }
+    // Create an applyResponse which will be used to tell Shardus that the tx has been applied
     const txId = crypto.hashObj(tx) // compute from tx
     const txTimestamp = tx.timestamp // get from tx
     console.log('DBG', 'attempting to apply tx', txId, '...')
-    // Create an applyResponse which will be used to tell Shardus that the tx has been applied
     const applyResponse = dapp.createApplyResponse(txId, txTimestamp)
-    // Apply tx here
+
+    // Apply the tx
     switch (tx.type) {
       case 'create': {
-        // Create the to account if it doesn't exist
-        let accountCreated = false
-        let to = accounts[tx.to]
+        // Get the to account
+        const to = wrappedStates[tx.to].data
         if (typeof to === 'undefined' || to === null) {
-          to = createAccount({ id: tx.to })
-          accounts[tx.to] = to
-          accountCreated = true
+          throw new Error(`account '${tx.to}' missing. tx: ${JSON.stringify(tx)}`)
         }
         // Increment the to accounts balance
         to.data.balance += tx.amount
-        // Update accounts meta data fields
-        const hashBefore = to.hash
-        const hashAfter = crypto.hashObj(to.data)
-        to.hash = hashAfter
-        to.timestamp = Date.now()
+        // Update the to accounts timestamp
+        to.timestamp = txTimestamp
         console.log('DBG', 'applied create tx', txId, accounts[tx.to])
-        // Add the right state data to our applyResponse to enable Shardus's data syncing
-        dapp.applyResponseAddState(applyResponse, to.data, to.id, txId, txTimestamp, hashBefore, hashAfter, accountCreated)
         break
       }
       case 'transfer': {
-        // Get the from account
-        const from = accounts[tx.from]
-        // Create the to account if it doesn't exist
-        let toAccountCreated = false
-        let to = accounts[tx.to]
+        // Get the from and to accounts
+        const from = wrappedStates[tx.from].data
+        if (typeof from === 'undefined' || from === null) {
+          throw new Error(`from account '${tx.to}' missing. tx: ${JSON.stringify(tx)}`)
+        }
+        const to = wrappedStates[tx.to].data
         if (typeof to === 'undefined' || to === null) {
-          to = createAccount({ id: tx.to })
-          accounts[tx.to] = to
-          toAccountCreated = true
+          throw new Error(`to account '${tx.to}' missing. tx: ${JSON.stringify(tx)}`)
         }
         // Decrement the from accounts balance
         from.data.balance -= tx.amount
-        const fromHashBefore = from.hash
-        const fromHashAfter = crypto.hashObj(from.data)
-        from.hash = fromHashAfter
-        from.timestamp = Date.now()
         // Increment the to accounts balance
         to.data.balance += tx.amount
-        const toHashBefore = to.hash
-        const toHashAfter = crypto.hashObj(to.data)
-        to.hash = toHashAfter
-        to.timestamp = Date.now()
+        // Update the from accounts timestamp
+        from.timestamp = txTimestamp
+        // Update the to accounts timestamp
+        to.timestamp = txTimestamp
         console.log('DBG', 'applied transfer tx', txId, accounts[tx.from], accounts[tx.to])
-        // Add the right state data to our applyResponse to enable Shardus's data syncing
-        dapp.applyResponseAddState(applyResponse, from.data, from.id, txId, txTimestamp, fromHashBefore, fromHashAfter, false)
-        dapp.applyResponseAddState(applyResponse, to.data, to.id, txId, txTimestamp, toHashBefore, toHashAfter, toAccountCreated)
         break
       }
     }
@@ -242,6 +201,7 @@ dapp.setup({
     const result = {
       sourceKeys: [],
       targetKeys: [],
+      allKeys: [],
       timestamp: tx.timestamp
     }
     switch (tx.type) {
@@ -253,6 +213,7 @@ dapp.setup({
         result.sourceKeys = [tx.from]
         break
     }
+    result.allKeys = result.allKeys.concat(result.sourceKeys, result.targetKeys)
     return result
   },
   getStateId (accountAddress, mustExist = true) {
@@ -263,45 +224,8 @@ dapp.setup({
     const stateId = account.hash
     return stateId
   },
-  getAccountDataByList (ids) {
-    const accountsList = getAccountsById(ids)
-    const wrappedAccounts = wrapAccountResults(accountsList)
-    return wrappedAccounts
-  },
   deleteLocalAccountData () {
     accounts = {}
-  },
-  getAccountData3 (accountStart, accountEnd, tsStart, maxRecords) {
-    let tsEnd = Date.now()
-    let result = getAccountsRange(accountStart, accountEnd, tsStart, tsEnd, maxRecords)
-    let lastUpdateNeeded = false
-    let wrappedAccounts2 = []
-    let highestTs = 0
-    // do we need more updates
-    if (result.length === 0) {
-      lastUpdateNeeded = true
-    } else {
-      // see if our newest record is new enough
-      highestTs = 0
-      for (let account of result) {
-        if (account.timestamp > highestTs) {
-          highestTs = account.timestamp
-        }
-      }
-      let delta = tsEnd - highestTs
-      // if the data we go was close enough to current time then we are done
-      // may have to be carefull about how we tune this value relative to the rate that we make this query
-      // we should try to make this query more often then the delta.
-      console.log('delta ' + delta)
-      if (delta < 7000) {
-        let tsStart2 = highestTs
-        let result2 = getAccountsRange(accountStart, accountEnd, tsStart2, Date.now(), 10000000)
-        wrappedAccounts2 = wrapAccountResults(result2)
-        lastUpdateNeeded = true
-      }
-    }
-    let wrappedAccounts = wrapAccountResults(result)
-    return { wrappedAccounts, lastUpdateNeeded, wrappedAccounts2, highestTs }
   },
   setAccountData (accountRecords) {
     let accountsToAdd = []
@@ -321,6 +245,35 @@ dapp.setup({
     console.log('setAccountData: ' + accountsToAdd.length)
     setAccountData(accountsToAdd)
     return failedHashes
+  },
+  getRelevantData (accountId, tx) {
+    let account = accounts[accountId]
+    let accountCreated = false
+    // Create the account if it doesn't exist
+    if (typeof account === 'undefined' || account === null) {
+      account = createAccount({ id: accountId, timestamp: 0 })
+      accounts[accountId] = account
+      accountCreated = true
+    }
+    // Wrap it for Shardus
+    const wrapped = dapp.createWrappedResponse(accountId, accountCreated, account.hash, account.timestamp, account)
+    return wrapped
+  },
+  updateAccountFull (wrappedData, localCache, applyResponse) {
+    const accountId = wrappedData.accountId
+    const accountCreated = wrappedData.accountCreated
+    const updatedAccount = wrappedData.data
+    // Update hash
+    const hashBefore = updatedAccount.hash
+    const hashAfter = crypto.hashObj(updatedAccount.data)
+    updatedAccount.hash = hashAfter
+    // Save updatedAccount to db / persistent storage
+    accounts[accountId] = updatedAccount
+    // Add data to our required response object
+    dapp.applyResponseAddState(applyResponse, updatedAccount, updatedAccount, accountId, applyResponse.txId, applyResponse.txTimestamp, hashBefore, hashAfter, accountCreated)
+  },
+  updateAccountPartial (wrappedData, localCache, applyResponse) {
+    this.updateAccountFull(wrappedData, localCache, applyResponse)
   }
 })
 
