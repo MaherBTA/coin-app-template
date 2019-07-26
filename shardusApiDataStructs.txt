@@ -1,0 +1,31 @@
+WrappedAccount {
+  accountId
+  accountCreated 
+  isPartial 
+  stateId 
+  timestamp 
+  data
+  userTag
+  localCache
+}
+
+SimpleCoinAccount {
+  address
+  hash
+  balance
+  txs
+  sequence
+  timestamp
+}
+
+on `getRelevantData`:
+  returns {
+    accountId:      SimpleCoinAccount.address
+    accountCreated: boolean
+    isPartial:      boolean
+    stateId:        SimpleCoinAccount.hash
+    timestamp:      SimpleCoinAccount.timestamp
+    data:           SimpleCoinAccount
+    userTag:        any
+    localCache:     if isPartial OR if accountCreated ? SimpleCoinAccount : undefined
+  }
