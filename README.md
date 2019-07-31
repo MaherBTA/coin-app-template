@@ -49,10 +49,8 @@ Repeat until desired behavior is achieved...
     ```
     $ shardus network start
     ```
- 
-3. Point a browser to http://localhost:3000 to open the network monitor.
 
-4. Interact with your network:
+3. Interact with your network:
 
     ```
     $ node ../client.js
