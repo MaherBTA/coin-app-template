@@ -4,7 +4,7 @@
 
 ```
 $ npm i -g git+https://gitlab.com/shardus/enterprise/tools/shardus-cli.git
-$ shardus init myApp
+$ shardus init myApp https://gitlab.com/shardus/enterprise/applications/coin-app-template.git
 $ cd myApp
 ```
 
