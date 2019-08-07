@@ -2,6 +2,22 @@
 
 ## Setup
 
+### Pre-install
+
+Make sure you have the following installed and configured:
+* Node.js (10.x)
+* Git
+
+Then, install the `node-gyp` dependencies for your platform listed [here](https://www.npmjs.com/package/node-gyp#installation).
+
+On Ubuntu, it goes something like this:
+```
+$ apt install python2.7 make g++
+$ npm config set python python2.7
+```
+
+### Install
+
 ```
 $ npm i -g git+https://gitlab.com/shardus/enterprise/tools/shardus-cli.git
 $ shardus init myApp https://gitlab.com/shardus/enterprise/applications/coin-app-template.git
