@@ -12,7 +12,7 @@ Then, install the `node-gyp` dependencies for your platform listed [here](https:
 
 On Ubuntu, it goes something like this:
 ```
-$ apt install python2.7 make g++
+$ sudo apt update && sudo apt install python2.7 make g++
 $ npm config set python python2.7
 ```
 
