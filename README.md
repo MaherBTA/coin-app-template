@@ -5,7 +5,8 @@
 ### Pre-install
 
 Make sure you have the following installed and configured:
-* Node.js (10.x)
+* Node.js (^10.16.2)
+* npm (^6.9.0)
 * Git
 
 Then, install the `node-gyp` dependencies for your platform listed [here](https://www.npmjs.com/package/node-gyp#installation).
