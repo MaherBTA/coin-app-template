@@ -3,7 +3,7 @@ to: <%= name %>/index.js
 ---
 const fs = require('fs')
 const path = require('path')
-const shardus = require('shardus-enterprise-server-dist')
+const shardus = require('shardus-enterprise-server')
 const crypto = require('shardus-crypto-utils')
 crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 
@@ -19,9 +19,9 @@ const dapp = shardus(config)
 
 /**
  * interface account {
- *   id: string,
- *   hash: string,
- *   timestamp: number,
+ *   id: string,        // 32 byte hex string
+ *   hash: string,      // 32 byte hex string
+ *   timestamp: number, // ms since epoch
  *   data: {
  *     balance: number
  *   }
@@ -274,7 +274,29 @@ dapp.setup({
   },
   updateAccountPartial (wrappedData, localCache, applyResponse) {
     this.updateAccountFull(wrappedData, localCache, applyResponse)
+  },
+  getAccountDataByRange (accountStart, accountEnd, tsStart, tsEnd, maxRecords) {
+    const results = []
+    const start = parseInt(accountStart, 16)
+    const end = parseInt(accountEnd, 16)
+    // Loop all accounts
+    for (const account of Object.values(accounts)) {
+      // Skip if not in account id range
+      const id = parseInt(account.id, 16)
+      if (id < start || id > end) continue
+      // Skip if not in timestamp range
+      const timestamp = account.timestamp
+      if (timestamp < tsStart || timestamp > tsEnd) continue
+      // Add to results
+      const wrapped = { accountId: account.id, stateId: account.hash, data: account, timestamp: account.timestamp }
+      results.push(wrapped)
+      // Return results early if maxRecords reached
+      if (results.length >= maxRecords) return results
+    }
+    return results
   }
 })
+
+dapp.registerExceptionHandler()
 
 dapp.start()
