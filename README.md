@@ -74,3 +74,15 @@ Repeat until desired behavior is achieved...
     $ client$ help
     ...
     ```
+
+4. Stop the network:
+
+   ```
+   $ shardus network stop
+   ```
+
+5. Clean databases and logs from the last run:
+
+   ```
+   $ shardus network clean
+   ```
