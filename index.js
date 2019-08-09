@@ -294,4 +294,6 @@ dapp.setup({
   }
 })
 
+dapp.registerExceptionHandler()
+
 dapp.start()
