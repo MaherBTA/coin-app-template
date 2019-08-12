@@ -3,7 +3,7 @@ to: <%= name %>/index.js
 ---
 const fs = require('fs')
 const path = require('path')
-const shardus = require('shardus-enterprise-server')
+const shardus = require('shardus-enterprise-server-dist')
 const crypto = require('shardus-crypto-utils')
 crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 

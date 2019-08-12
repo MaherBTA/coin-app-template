@@ -5,9 +5,26 @@ to: <%= name %>/README.md
 
 ## Setup
 
+### Pre-install
+
+Make sure you have the following installed and configured:
+* Node.js (^10.16.2)
+* npm (^6.9.0)
+* Git
+
+Then, install the `node-gyp` dependencies for your platform listed [here](https://www.npmjs.com/package/node-gyp#installation).
+
+On Ubuntu, it goes something like this:
+```
+$ sudo apt update && sudo apt install python2.7 make g++
+$ npm config set python python2.7
+```
+
+### Install
+
 ```
 $ npm i -g git+https://gitlab.com/shardus/enterprise/tools/shardus-cli.git
-$ shardus init myApp
+$ shardus init myApp https://gitlab.com/shardus/enterprise/applications/coin-app-template.git
 $ cd myApp
 ```
 
@@ -52,13 +69,23 @@ Repeat until desired behavior is achieved...
     ```
     $ shardus network start
     ```
- 
-3. Point a browser to http://localhost:3000 to open the network monitor.
 
-4. Interact with your network:
+3. Interact with your network:
 
     ```
     $ node ../client.js
     $ client$ help
     ...
     ```
+
+4. Stop the network:
+
+   ```
+   $ shardus network stop
+   ```
+
+5. Clean databases and logs from the last run:
+
+   ```
+   $ shardus network clean
+   ```
