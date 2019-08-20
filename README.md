@@ -4,7 +4,7 @@
 
 ### Pre-install
 
-Make sure you have the following installed and configured:
+Make sure you have the following installed and configured (we recommend using [nvm](https://github.com/nvm-sh/nvm)/[nvm-windows](https://github.com/coreybutler/nvm-windows) to manage your Node.js and npm versions):
 * Node.js (10.x.x)
 * npm (6.x.x)
 * Git
