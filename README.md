@@ -56,8 +56,8 @@ Repeat until desired behavior is achieved...
 1. Create a local test network with multiple instances of your `index.js` server:
 
     ```
-    $ shardus network create
-    (use default settings for prompts)...
+    $ shardus network create --default
+    (uses default settings for prompts)...
     $ cd instances
     ```
 
