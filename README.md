@@ -1,4 +1,4 @@
-# How to Make a Dapp with Shardus
+# Getting Familiar with Shardus
 
 ## Setup
 
