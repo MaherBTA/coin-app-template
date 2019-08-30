@@ -48,8 +48,12 @@ function createAccount (obj = {}) {
 
 dapp.registerExternalPost('inject', async (req, res) => {
   console.log(req.body)
-  const response = dapp.put(req.body)
-  res.json(response)
+  try {
+    const response = dapp.put(req.body)
+    res.json(response)
+  } catch (err) {
+    console.log('Failed to inject tx: ', err)
+  }
 })
 
 dapp.registerExternalGet('account/:id', async (req, res) => {
