@@ -1,15 +1,15 @@
 ---
 to: <%= name %>/README.md
 ---
-# How to Make a Dapp with Shardus
+# Getting Familiar with Shardus
 
 ## Setup
 
 ### Pre-install
 
-Make sure you have the following installed and configured:
-* Node.js (^10.16.2)
-* npm (^6.9.0)
+Make sure you have the following installed and configured (we recommend using [nvm](https://github.com/nvm-sh/nvm)/[nvm-windows](https://github.com/coreybutler/nvm-windows) to manage your Node.js and npm versions):
+* Node.js (10.x.x)
+* npm (6.x.x)
 * Git
 
 Then, install the `node-gyp` dependencies for your platform listed [here](https://www.npmjs.com/package/node-gyp#installation).
@@ -59,8 +59,8 @@ Repeat until desired behavior is achieved...
 1. Create a local test network with multiple instances of your `index.js` server:
 
     ```
-    $ shardus network create
-    (use default settings for prompts)...
+    $ shardus network create --default
+    (uses default settings for prompts)...
     $ cd instances
     ```
 
