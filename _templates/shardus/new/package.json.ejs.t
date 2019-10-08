@@ -17,20 +17,20 @@ to: <%= name %>/package.json
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "got": "9.6.0",
+    "got": "^9.6.0",
     "shardus-crypto-utils": "git+https://gitlab.com/shardus/shardus-crypto-utils.git",
     "shardus-enterprise-server-dist": "git+https://gitlab.com/shardus/enterprise/shardus-enterprise-server-dist.git",
-    "vorpal": "1.12.0"
+    "vorpal": "^1.12.0"
   },
   "devDependencies": {
-    "cross-env": "5.2.0",
-    "execa": "1.0.0",
+    "cross-env": "^5.2.0",
+    "execa": "^1.0.0",
     "hygen-create": "^0.2.1",
     "monitor-server": "git+https://gitlab.com/shardus/enterprise/monitor-server.git",
-    "pm2": "3.5.0",
+    "pm2": "^3.5.0",
     "seed-node-server": "git+https://gitlab.com/shardus/enterprise/seed-node-server.git",
-    "shelljs": "0.8.3",
-    "standard": "12.0.1",
-    "yarpm": "0.2.1"
+    "shelljs": "^0.8.3",
+    "standard": "^12.0.1",
+    "yarpm": "^0.2.1"
   }
 }
