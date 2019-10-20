@@ -12,7 +12,7 @@ to: <%= name %>/package.json
     "stop": "node scripts/stop.js",
     "clean": "node scripts/clean.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-template": "hygen-create generate"
+    "update-template": "node scripts/update-template.js"
   },
   "author": "",
   "license": "ISC",
