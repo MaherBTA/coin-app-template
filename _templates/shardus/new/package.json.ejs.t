@@ -20,6 +20,7 @@ to: <%= name %>/package.json
     "got": "^9.6.0",
     "shardus-crypto-utils": "git+https://gitlab.com/shardus/shardus-crypto-utils.git",
     "shardus-enterprise-server-dist": "git+https://gitlab.com/shardus/enterprise/shardus-enterprise-server-dist.git",
+    "shardus-enterprise-server": "git+https://gitlab.com/shardus/enterprise/shardus-enterprise-server.git",
     "vorpal": "^1.12.0"
   },
   "devDependencies": {
