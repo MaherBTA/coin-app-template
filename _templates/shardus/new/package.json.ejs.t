@@ -29,7 +29,7 @@ to: <%= name %>/package.json
     "hygen-create": "^0.2.1",
     "monitor-server": "git+https://gitlab.com/shardus/enterprise/monitor-server.git",
     "pm2": "^4.1.2",
-    "seed-node-server": "git+https://gitlab.com/shardus/enterprise/seed-node-server.git",
+    "seed-node-server": "git+https://gitlab.com/shardus/seed-node-server.git",
     "shelljs": "^0.8.3",
     "standard": "^12.0.1",
     "yarpm": "^0.2.1"
