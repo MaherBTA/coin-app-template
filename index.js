@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const shardus = require('shardus-enterprise-server')
+const shardus = require('shardus-global-server')
 const crypto = require('shardus-crypto-utils')
 crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 
@@ -261,6 +261,30 @@ dapp.setup({
     const wrapped = dapp.createWrappedResponse(accountId, accountCreated, account.hash, account.timestamp, account)
     return wrapped
   },
+  getAccountData (accountStart, accountEnd, maxRecords) {
+    const results = []
+    const start = parseInt(accountStart, 16)
+    const end = parseInt(accountEnd, 16)
+    // Loop all accounts
+    for (const account of Object.values(accounts)) {
+      // Skip if not in account id range
+      const id = parseInt(account.id, 16)
+      if (id < start || id > end) continue
+
+      // Add to results
+      const wrapped = {
+        accountId: account.id,
+        stateId: account.hash,
+        data: account,
+        timestamp: account.timestamp
+      }
+      results.push(wrapped)
+
+      // Return results early if maxRecords reached
+      if (results.length >= maxRecords) return results
+    }
+    return results
+  },
   updateAccountFull (wrappedData, localCache, applyResponse) {
     const accountId = wrappedData.accountId
     const accountCreated = wrappedData.accountCreated
@@ -296,6 +320,38 @@ dapp.setup({
       if (results.length >= maxRecords) return results
     }
     return results
+  },
+  calculateAccountHash (account) {
+    return crypto.hashObj(account)
+  },
+  resetAccountData (accountBackupCopies) {
+    for (let recordData of accountBackupCopies) {
+      accounts[recordData.id] = recordData
+    }
+  },
+  deleteAccountData (addressList) {
+    for (const address of addressList) {
+      delete accounts[address]
+    }
+  },
+  getAccountDataByList (addressList) {
+    const results = []
+    for (const address of addressList) {
+      const account = accounts[address]
+      if (account) {
+        const wrapped = {
+          accountId: account.id,
+          stateId: account.hash,
+          data: account,
+          timestamp: account.timestamp
+        }
+        results.push(wrapped)
+      }
+    }
+    return results
+  },
+  close () {
+    console.log('Shutting down...')
   }
 })
 
