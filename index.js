@@ -16,6 +16,8 @@ if (fs.existsSync(path.join(process.cwd(), 'config.json'))) {
 }
 
 if (process.env.BASE_DIR) {
+  const baseDirFileConfig = JSON.parse(fs.readFileSync(path.join(process.env.BASE_DIR, 'config.json')))
+  config = merge(config, baseDirFileConfig, { arrayMerge: overwriteMerge })
   config.server.baseDir = process.env.BASE_DIR
 }
 
