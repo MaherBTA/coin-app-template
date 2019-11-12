@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const merge = require('deepmerge')
+const stringify = require('fast-stable-stringify')
 const shardus = require('shardus-global-server')
 const crypto = require('shardus-crypto-utils')
 crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
@@ -355,6 +356,9 @@ dapp.setup({
       }
     }
     return results
+  },
+  getAccountDebugValue (wrappedAccount) {
+    return `${stringify(wrappedAccount)}`
   },
   close () {
     console.log('Shutting down...')
