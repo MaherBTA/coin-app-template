@@ -22,12 +22,12 @@
     "vorpal": "^1.12.0"
   },
   "devDependencies": {
+    "archive-server": "git+https://gitlab.com/shardus/archive/archive-server.git",
     "cross-env": "^5.2.0",
     "execa": "^1.0.0",
     "hygen-create": "^0.2.1",
     "monitor-server": "git+https://gitlab.com/shardus/monitor-server.git",
     "pm2": "^4.1.2",
-    "seed-node-server": "git+https://gitlab.com/shardus/seed-node-server.git",
     "shelljs": "^0.8.3",
     "standard": "^12.0.1",
     "yarpm": "^0.2.1"
