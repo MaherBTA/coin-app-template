@@ -10,7 +10,8 @@
     "scripts/clean.js": true,
     "scripts/start.js": true,
     "scripts/stop.js": true,
-    "client.js": true
+    "client.js": true,
+    "config.json": true
   },
   "templatize_using_name": "shardus-template",
   "gen_parent_dir": true
