@@ -3,15 +3,22 @@ to: <%= name %>/index.js
 ---
 const fs = require('fs')
 const path = require('path')
-const shardus = require('shardus-global-server')
+const merge = require('deepmerge')
+const stringify = require('fast-stable-stringify')
+const shardus = require('shardus-global-server-dist')
 const crypto = require('shardus-crypto-utils')
 crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 
+const overwriteMerge = (target, source, options) => source
+
 let config = { server: { baseDir: './' } }
+
+if (fs.existsSync(path.join(process.cwd(), 'config.json'))) {
+  const fileConfig = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'config.json')))
+  config = merge(config, fileConfig, { arrayMerge: overwriteMerge })
+}
+
 if (process.env.BASE_DIR) {
-  if (fs.existsSync(path.join(process.env.BASE_DIR, 'config.json'))) {
-    config = JSON.parse(fs.readFileSync(path.join(process.env.BASE_DIR, 'config.json')))
-  }
   config.server.baseDir = process.env.BASE_DIR
 }
 
@@ -352,6 +359,9 @@ dapp.setup({
       }
     }
     return results
+  },
+  getAccountDebugValue (wrappedAccount) {
+    return `${stringify(wrappedAccount)}`
   },
   close () {
     console.log('Shutting down...')
