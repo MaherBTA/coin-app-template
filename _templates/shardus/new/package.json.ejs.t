@@ -12,7 +12,8 @@ to: <%= name %>/package.json
     "stop": "node scripts/stop.js",
     "clean": "node scripts/clean.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-template": "node scripts/update-template.js"
+    "update-template": "node scripts/update-template.js",
+    "update-docker": "docker build -t registry.gitlab.com/shardus/applications/coin-app-template . && docker push registry.gitlab.com/shardus/applications/coin-app-template"
   },
   "author": "",
   "license": "ISC",
@@ -25,12 +26,12 @@ to: <%= name %>/package.json
     "vorpal": "^1.12.0"
   },
   "devDependencies": {
+    "archive-server": "git+https://gitlab.com/shardus/archive/archive-server.git",
     "cross-env": "^5.2.0",
     "execa": "^1.0.0",
     "hygen-create": "^0.2.1",
     "monitor-server": "git+https://gitlab.com/shardus/monitor-server.git",
     "pm2": "^4.1.2",
-    "seed-node-server": "git+https://gitlab.com/shardus/seed-node-server.git",
     "shelljs": "^0.8.3",
     "standard": "^12.0.1",
     "yarpm": "^0.2.1"

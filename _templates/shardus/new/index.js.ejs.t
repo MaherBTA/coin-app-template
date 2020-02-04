@@ -19,7 +19,46 @@ if (fs.existsSync(path.join(process.cwd(), 'config.json'))) {
 }
 
 if (process.env.BASE_DIR) {
+  const baseDirFileConfig = JSON.parse(fs.readFileSync(path.join(process.env.BASE_DIR, 'config.json')))
+  config = merge(config, baseDirFileConfig, { arrayMerge: overwriteMerge })
   config.server.baseDir = process.env.BASE_DIR
+}
+
+if (process.env.APP_SEEDLIST) {
+  config = merge(config, {
+    server: {
+      p2p: {
+        existingArchivers: [
+          {
+            ip: process.env.APP_SEEDLIST,
+            port: 4000,
+            publicKey: '758b1c119412298802cd28dbfa394cdfeecc4074492d60844cc192d632d84de3'
+          }
+        ]
+      }
+    }
+  }, { arrayMerge: overwriteMerge })
+}
+
+if (process.env.APP_MONITOR) {
+  config = merge(config, {
+    server: {
+      reporting: {
+        recipient: `http://${process.env.APP_MONITOR}:3000/api`
+      }
+    }
+  }, { arrayMerge: overwriteMerge })
+}
+
+if (process.env.APP_IP) {
+  config = merge(config, {
+    server: {
+      ip: {
+        externalIp: process.env.APP_IP,
+        internalIp: process.env.APP_IP
+      }
+    }
+  }, { arrayMerge: overwriteMerge })
 }
 
 const dapp = shardus(config)
