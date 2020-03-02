@@ -3,7 +3,7 @@ const { resolve } = require('path')
 const vorpal = require('vorpal')()
 const got = require('got')
 const crypto = require('shardus-crypto-utils')
-crypto('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
+crypto.init('64f152869ca2d473e4ba64ab53f49ccdb2edae22da192c126850970e788af347')
 
 const walletFile = resolve('./wallet.json')
 let walletEntries = {}
