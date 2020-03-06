@@ -75,6 +75,8 @@ const dapp = shardus(config)
  * }
  */
 let accounts = {}
+let transactions = {}
+
 function setAccountData (accountsToAdd = []) {
   for (const account of accountsToAdd) {
     accounts[account.id] = account
@@ -97,6 +99,17 @@ dapp.registerExternalPost('inject', async (req, res) => {
   try {
     const response = dapp.put(req.body)
     res.json(response)
+    if(response.success == true){
+	if(req.body.type == 'create'){
+	   if(transactions[req.body.to] == undefined) transactions[req.body.to]=[]
+	   transactions[req.body.to].push(req.body)		
+	}else{
+	   if(transactions[req.body.to] == undefined) transactions[req.body.to]=[]
+	   if(transactions[req.body.from] == undefined) transactions[req.body.from]=[]
+           transactions[req.body.from].push(req.body)
+	   transactions[req.body.to].push(req.body)	
+	}
+    }
   } catch (err) {
     console.log('Failed to inject tx: ', err)
   }
@@ -110,6 +123,12 @@ dapp.registerExternalGet('account/:id', async (req, res) => {
 
 dapp.registerExternalGet('accounts', async (req, res) => {
   res.json({ accounts })
+})
+
+dapp.registerExternalGet('recent/:id', async (req, res) => {
+  const id = req.params['id']
+  const txs = transactions[id] || []
+  res.json({ txs })
 })
 
 /**
