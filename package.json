@@ -17,7 +17,7 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "fast-stable-stringify": "^1.0.0",
-    "got": "^9.6.0",
+    "got": "^11.8.5",
     "shardus-crypto-utils": "git+https://gitlab.com/shardus/shardus-crypto-utils.git",
     "shardus-global-server-dist": "git+https://gitlab.com/shardus/global/shardus-global-server-dist.git",
     "vorpal": "^1.12.0"
